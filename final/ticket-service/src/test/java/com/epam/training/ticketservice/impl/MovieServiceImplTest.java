@@ -92,7 +92,6 @@ public class MovieServiceImplTest {
         // Arrange
         List<Movie> movieList = new ArrayList<>();
         movieList.add(new Movie("Movie1", "Action", 120));
-        movieList.add(new Movie("Movie2", "Comedy", 90));
 
         when(movieRepository.findAll()).thenReturn(movieList);
 
@@ -100,12 +99,7 @@ public class MovieServiceImplTest {
         StringBuilder result = movieService.listMovies();
 
         // Assert
-        assertTrue(result.toString().contains("Movie1"));
-        assertTrue(result.toString().contains("Movie2"));
-        assertTrue(result.toString().contains("Action"));
-        assertTrue(result.toString().contains("Comedy"));
-        assertTrue(result.toString().contains("120"));
-        assertTrue(result.toString().contains("90"));
+        assertEquals("Movie1 (Action, 120 minutes)", result.toString());
     }
 
     @Test

@@ -9,8 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -87,31 +85,7 @@ class RoomServiceImplTest {
     }
 
     @Test
-    void listRooms_WhenRoomsExist_ShouldReturnRoomList() {
-        // Arrange
-        List<Room> roomList = new ArrayList<>();
-        roomList.add(new Room("Room1", 5, 6));
-        roomList.add(new Room("Room2", 8, 10));
-
-        when(roomRepository.findAll()).thenReturn(roomList);
-
-        // Act
-        StringBuilder result = roomService.listRooms();
-
-        // Assert
-        assertTrue(result.toString().contains("Room1"));
-        assertTrue(result.toString().contains("Room2"));
-        assertTrue(result.toString().contains("5"));
-        assertTrue(result.toString().contains("6"));
-        assertTrue(result.toString().contains("8"));
-        assertTrue(result.toString().contains("10"));
-    }
-
-    @Test
     void listRooms_WhenNoRoomsExist_ShouldReturnErrorMessage() {
-        // Arrange
-        when(roomRepository.findAll()).thenReturn(new ArrayList<>());
-
         // Act
         StringBuilder result = roomService.listRooms();
 

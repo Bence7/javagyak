@@ -1,4 +1,5 @@
-import com.epam.training.ticketservice.types.CustomDateTime;
+package com.epam.training.ticketservice.types;
+
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;

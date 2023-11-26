@@ -92,6 +92,4 @@ public class ScreeningCommandsTest {
         assertNull(result);
         verify(screeningService, times(1)).saveScreening(any());
     }
-
-    // Add more test cases to cover various scenarios for create method
 }
