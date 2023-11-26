@@ -3,13 +3,10 @@ package com.epam.training.ticketservice.commands;
 import com.epam.training.ticketservice.entities.Movie;
 import com.epam.training.ticketservice.entities.Room;
 import com.epam.training.ticketservice.entities.Screening;
-import com.epam.training.ticketservice.repository.MovieRepository;
-import com.epam.training.ticketservice.repository.RoomRepository;
-import com.epam.training.ticketservice.repository.ScreeningRepository;
+import com.epam.training.ticketservice.service.MovieService;
+import com.epam.training.ticketservice.service.RoomService;
 import com.epam.training.ticketservice.service.ScreeningService;
 import com.epam.training.ticketservice.types.CustomDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -18,46 +15,31 @@ import org.springframework.shell.standard.ShellMethodAvailability;
 
 import java.time.LocalDateTime;
 
+
 @ShellComponent
 @ShellCommandGroup(value = "Admin Commands")
-public class ScreeningCommands implements ScreeningService {
+public class ScreeningCommands {
+    private final ScreeningService screeningService;
+    private final MovieService movieService;
+    private final RoomService roomService;
 
-    private final ScreeningRepository screeningRepository;
-    private final RoomRepository roomRepository;
-    private final MovieRepository movieRepository;
-    Logger logger = LoggerFactory.getLogger(ScreeningCommands.class);
-
-    public ScreeningCommands(ScreeningRepository screeningRepository,
-                             RoomRepository roomRepository, MovieRepository movieRepository) {
-        this.screeningRepository = screeningRepository;
-        this.roomRepository = roomRepository;
-        this.movieRepository = movieRepository;
+    public ScreeningCommands(ScreeningService screeningService, MovieService movieService, RoomService roomService) {
+        this.screeningService = screeningService;
+        this.movieService = movieService;
+        this.roomService = roomService;
     }
 
-    @Override
-    public void saveScreening(Screening screening) {
-        screeningRepository.save(screening);
-    }
-
-    @Override
     @ShellMethodAvailability("isLoggedIn")
     @ShellMethod(key = "delete screening", value = "Delete screening.")
     public void deleteScreening(String movieName, String roomName, String customDate) {
-        screeningRepository.findAll().forEach(screening -> {
-            if (screening.getRoom().getName().equals(roomName)
-                    && screening.getMovie().getName().equals(movieName)
-                    && screening.getCustomDate().equals(customDate)) {
-                logger.info(String.valueOf(screening));
-                screeningRepository.delete(screening);
-            }
-        });
+        screeningService.deleteScreening(movieName, roomName, customDate);
     }
 
     @ShellMethodAvailability("isLoggedIn")
     @ShellMethod(key = "create screening", value = "Create screening.")
     public String create(String movieName, String roomName, String dateTime) {
-        Movie movie = movieRepository.findById(movieName).orElse(null);
-        Room room = roomRepository.findById(roomName).orElse(null);
+        Movie movie = movieService.findById(movieName).orElse(null);
+        Room room = roomService.findById(roomName).orElse(null);
 
         if (movie == null || room == null) {
             return "Movie or room not found.";
@@ -70,34 +52,33 @@ public class ScreeningCommands implements ScreeningService {
         LocalDateTime newScreeningStart = customDateTime.getDateTime();  //18:39
         LocalDateTime newScreeningEnd = newScreeningStart.plusMinutes(movie.getLength());  //18:39+120=20:39
 
-        for (Screening screening : screeningRepository.findAll()) {
+        for (Screening screening : screeningService.findAll()) {
             LocalDateTime screeningEnd = screening.getDateTime().plusMinutes(screening.getMovie().getLength()); //11:00+450=18:30
 
             if (newScreeningEnd.plusMinutes(10).isBefore(screening.getDateTime()) || newScreeningStart.isAfter(screeningEnd.plusMinutes(9))) {
-                saveScreening(new Screening(movie, room, newScreeningStart));
+                screeningService.saveScreening(new Screening(movie, room, newScreeningStart));
                 return null;
-            }
-            else {
+            } else {
                 return (newScreeningStart.isBefore(screeningEnd.plusMinutes(10)) && newScreeningStart.isAfter(screeningEnd)) ?
-                        "This would start in the break period after another screening in this room":
+                        "This would start in the break period after another screening in this room" :
                         "There is an overlapping screening";
             }
         }
-        saveScreening(new Screening(movie, room, newScreeningStart));
+        screeningService.saveScreening(new Screening(movie, room, newScreeningStart));
         return null;
     }
 
-    @Override
     @ShellMethod(key = "list screenings", value = "List screenings.")
-    public StringBuilder listScreenings() {
-        StringBuilder screeningList = new StringBuilder();
-        screeningRepository.findAll().forEach(movie -> screeningList.append(movie.toString()).append("\n"));
-        if (screeningList.length() > 2) {
-            screeningList.delete(screeningList.length() - 1, screeningList.length());
-            return screeningList;
-        } else {
-            return new StringBuilder("There are no screenings");
+    public String listScreenings() {
+        var list=screeningService.findAll();
+        if (list.size()==0){
+            return "There are no screenings";
         }
+        String asd="";
+        for (var l: list){
+            asd=asd+l.toString()+"\n";
+        }
+        return asd;
     }
 
     public Availability isLoggedIn() {

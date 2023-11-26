@@ -7,7 +7,6 @@ import org.springframework.shell.standard.ShellMethodAvailability;
 
 @ShellComponent
 public class AuthenticationCommands {
-
     static boolean isLogged = false;
     private final String adminUsername = "admin";
 
