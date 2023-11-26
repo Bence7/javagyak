@@ -1,5 +1,6 @@
 Feature: allows creating, deleting and listing screenings
-  Background: 
+
+  Background:
     Given the application is started
     And the prompt containing "Ticket service>" is printed
     And the user types the "sign in privileged admin admin" command

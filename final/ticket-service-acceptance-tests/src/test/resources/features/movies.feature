@@ -1,4 +1,5 @@
 Feature: allows creating movie descriptions
+
   Background:
     Given the application is started
     And the prompt containing "Ticket service>" is printed
