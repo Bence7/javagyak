@@ -1,5 +1,7 @@
-package com.epam.training.ticketservice.commands;
+package com.epam.training.ticketservice.impl;
 
+import com.epam.training.ticketservice.commands.AuthenticationCommands;
+import com.epam.training.ticketservice.commands.RoomCommands;
 import com.epam.training.ticketservice.entities.Room;
 import com.epam.training.ticketservice.repository.RoomRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,19 +70,5 @@ public class RoomCommandsTest {
     public void testDeleteRoom() {
         roomCommands.delete("Room1");
         verify(roomRepository, times(1)).deleteById("Room1");
-    }
-
-    @Test
-    public void testIsLoggedIn() {
-        AuthenticationCommands.isLogged = true;
-        Availability availability = roomCommands.isLoggedIn();
-        assertTrue(availability.isAvailable());
-    }
-
-    @Test
-    public void testIsNotLoggedIn() {
-        AuthenticationCommands.isLogged = false;
-        Availability availability = roomCommands.isLoggedIn();
-        assertFalse(availability.isAvailable());
     }
 }

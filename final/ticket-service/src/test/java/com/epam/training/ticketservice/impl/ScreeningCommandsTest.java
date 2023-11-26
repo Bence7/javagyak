@@ -1,5 +1,7 @@
-package com.epam.training.ticketservice.commands;
+package com.epam.training.ticketservice.impl;
 
+import com.epam.training.ticketservice.commands.AuthenticationCommands;
+import com.epam.training.ticketservice.commands.ScreeningCommands;
 import com.epam.training.ticketservice.entities.Movie;
 import com.epam.training.ticketservice.entities.Room;
 import com.epam.training.ticketservice.entities.Screening;
@@ -73,24 +75,25 @@ public class ScreeningCommandsTest {
         verify(screeningRepository, never()).save(any(Screening.class));
         assertEquals("There is an overlapping screening", result);
     }
-/*
-    @Test
-    public void testCreateScreeningInBreakPeriod() {
-        Movie movie = new Movie("Movie1", "Action", 120);
-        Room room = new Room("Room1", 10, 10);
-        CustomDateTime customDateTime = new CustomDateTime();
-        customDateTime.setDateTimeFromString("2023-10-10 14:00");
-        Screening existingScreening = new Screening(movie, room, customDateTime.getDateTime());
 
-        when(movieRepository.findById("Movie1")).thenReturn(Optional.of(movie));
-        when(roomRepository.findById("Room1")).thenReturn(Optional.of(room));
-        when(screeningRepository.findAll()).thenReturn(List.of(existingScreening));
+    /*
+        @Test
+        public void testCreateScreeningInBreakPeriod() {
+            Movie movie = new Movie("Movie1", "Action", 120);
+            Room room = new Room("Room1", 10, 10);
+            CustomDateTime customDateTime = new CustomDateTime();
+            customDateTime.setDateTimeFromString("2023-10-10 14:00");
+            Screening existingScreening = new Screening(movie, room, customDateTime.getDateTime());
 
-        String result = screeningCommands.create("Movie1", "Room1", "2023-10-10 16:05");
-        verify(screeningRepository, never()).save(any(Screening.class));
-        assertEquals("This would start in the break period after another screening in this room", result);
-    }
-*/
+            when(movieRepository.findById("Movie1")).thenReturn(Optional.of(movie));
+            when(roomRepository.findById("Room1")).thenReturn(Optional.of(room));
+            when(screeningRepository.findAll()).thenReturn(List.of(existingScreening));
+
+            String result = screeningCommands.create("Movie1", "Room1", "2023-10-10 16:05");
+            verify(screeningRepository, never()).save(any(Screening.class));
+            assertEquals("This would start in the break period after another screening in this room", result);
+        }
+    */
     @Test
     public void testListScreeningsWhenScreeningsExist() {
         Screening screening = new Screening(new Movie("Movie1", "Action", 120),
@@ -98,14 +101,14 @@ public class ScreeningCommandsTest {
         CustomDateTime customDateTime = new CustomDateTime();
         customDateTime.formatLocalDateTimeToString(LocalDateTime.now());
         when(screeningRepository.findAll()).thenReturn(List.of(screening));
-        StringBuilder result = screeningCommands.listScreenings();
+        var result = screeningCommands.listScreenings();
         assertEquals("Movie1 (Action, 120 minutes), screened in room Room1, at " + customDateTime.formatLocalDateTimeToString(LocalDateTime.now()), result.toString().trim());
     }
 
     @Test
     public void testListScreeningsWhenNoScreeningsExist() {
         when(screeningRepository.findAll()).thenReturn(Collections.emptyList());
-        StringBuilder result = screeningCommands.listScreenings();
+        var result = screeningCommands.listScreenings();
         assertEquals("There are no screenings", result.toString().trim());
     }
 
