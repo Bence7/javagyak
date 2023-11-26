@@ -23,6 +23,10 @@ public class Room {
         return name;
     }
 
+    public Integer getColumns() {
+        return columns;
+    }
+
     public void setRows(Integer rows) {
         this.rows = rows;
     }

@@ -1,11 +1,11 @@
 package com.epam.training.ticketservice.commands;
 
-import com.epam.training.ticketservice.commands.AuthenticationCommands;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.shell.Availability;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 public class AuthenticationCommandsTest {
 
     private AuthenticationCommands authenticationCommands;

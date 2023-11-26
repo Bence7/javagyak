@@ -10,6 +10,7 @@ import java.util.Optional;
 @Service
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
+
     public MovieServiceImpl(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
     }

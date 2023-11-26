@@ -53,14 +53,17 @@ public class ScreeningCommands {
         LocalDateTime newScreeningEnd = newScreeningStart.plusMinutes(movie.getLength());  //18:39+120=20:39
 
         for (Screening screening : screeningService.findAll()) {
-            LocalDateTime screeningEnd = screening.getDateTime().plusMinutes(screening.getMovie().getLength()); //11:00+450=18:30
+            LocalDateTime screeningEnd = screening.getDateTime()
+                    .plusMinutes(screening.getMovie().getLength()); //11:00+450=18:30
 
-            if (newScreeningEnd.plusMinutes(10).isBefore(screening.getDateTime()) || newScreeningStart.isAfter(screeningEnd.plusMinutes(9))) {
+            if (newScreeningEnd.plusMinutes(10).isBefore(screening.getDateTime())
+                    || newScreeningStart.isAfter(screeningEnd.plusMinutes(9))) {
                 screeningService.saveScreening(new Screening(movie, room, newScreeningStart));
                 return null;
             } else {
-                return (newScreeningStart.isBefore(screeningEnd.plusMinutes(10)) && newScreeningStart.isAfter(screeningEnd)) ?
-                        "This would start in the break period after another screening in this room" :
+                return (newScreeningStart.isBefore(screeningEnd.plusMinutes(10))
+                        && newScreeningStart.isAfter(screeningEnd))
+                        ? "This would start in the break period after another screening in this room" :
                         "There is an overlapping screening";
             }
         }
@@ -70,15 +73,15 @@ public class ScreeningCommands {
 
     @ShellMethod(key = "list screenings", value = "List screenings.")
     public String listScreenings() {
-        var list=screeningService.findAll();
-        if (list.size()==0){
+        var list = screeningService.findAll();
+        if (list.isEmpty()) {
             return "There are no screenings";
         }
-        String asd="";
-        for (var l: list){
-            asd=asd+l.toString()+"\n";
+        StringBuilder asd = new StringBuilder();
+        for (var l : list) {
+            asd.append(l.toString()).append("\n");
         }
-        return asd;
+        return asd.toString();
     }
 
     public Availability isLoggedIn() {
