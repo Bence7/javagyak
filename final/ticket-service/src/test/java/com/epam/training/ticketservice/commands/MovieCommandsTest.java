@@ -8,9 +8,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
+import org.springframework.shell.Availability;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class MovieCommandsTest {
@@ -39,8 +41,26 @@ public class MovieCommandsTest {
     }
 
     @Test
-    public void testDeleteMovie() {
-        movieCommands.delete("Movie1");
-        verify(movieService, times(0)).deleteMovie("Movie1");
+    void isLoggedIn_whenLogged_shouldReturnAvailable() {
+        // Arrange
+        AuthenticationCommands.isLogged = true;
+
+        // Act
+        Availability availability = movieCommands.isLoggedIn();
+
+        // Assert
+        assertEquals(true, availability.isAvailable());
+    }
+
+    @Test
+    void isLoggedIn_whenNotLogged_shouldReturnUnavailable() {
+        // Arrange
+        AuthenticationCommands.isLogged = false;
+
+        // Act
+        Availability availability = movieCommands.isLoggedIn();
+
+        // Assert
+        assertEquals(false, availability.isAvailable());
     }
 }

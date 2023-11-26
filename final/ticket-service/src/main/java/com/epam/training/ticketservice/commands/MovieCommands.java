@@ -38,7 +38,6 @@ public class MovieCommands {
     @ShellMethodAvailability("isLoggedIn")
     @ShellMethod(key = "delete movie", value = "Delete movie by name.")
     public void delete(String name) {
-
         movieService.deleteMovie(name);
     }
 
