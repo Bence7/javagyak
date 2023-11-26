@@ -53,18 +53,17 @@ public class ScreeningCommands {
         LocalDateTime newScreeningEnd = newScreeningStart.plusMinutes(movie.getLength());  //18:39+120=20:39
 
         for (Screening screening : screeningService.findAll()) {
-            LocalDateTime screeningEnd = screening.getDateTime()
-                    .plusMinutes(screening.getMovie().getLength()); //11:00+450=18:30
+            if (screening.getRoom().getName().equals(roomName)) {
+                LocalDateTime screeningEnd = screening.getDateTime()
+                        .plusMinutes(screening.getMovie().getLength()); //11:00+450=18:30
 
-            if (newScreeningEnd.plusMinutes(10).isBefore(screening.getDateTime())
-                    || newScreeningStart.isAfter(screeningEnd.plusMinutes(9))) {
-                screeningService.saveScreening(new Screening(movie, room, newScreeningStart));
-                return null;
-            } else {
-                return (newScreeningStart.isBefore(screeningEnd.plusMinutes(10))
-                        && newScreeningStart.isAfter(screeningEnd))
-                        ? "This would start in the break period after another screening in this room" :
-                        "There is an overlapping screening";
+                if (!newScreeningEnd.plusMinutes(10).isBefore(screening.getDateTime())
+                        && !newScreeningStart.isAfter(screeningEnd.plusMinutes(9))) {
+                    return (newScreeningStart.isBefore(screeningEnd.plusMinutes(10))
+                            && newScreeningStart.isAfter(screeningEnd))
+                            ? "This would start in the break period after another screening in this room" :
+                            "There is an overlapping screening";
+                }
             }
         }
         screeningService.saveScreening(new Screening(movie, room, newScreeningStart));
@@ -73,15 +72,14 @@ public class ScreeningCommands {
 
     @ShellMethod(key = "list screenings", value = "List screenings.")
     public String listScreenings() {
-        var list = screeningService.findAll();
-        if (list.isEmpty()) {
+        StringBuilder screeningList = new StringBuilder();
+        screeningService.findAll().forEach(movie -> screeningList.append(movie.toString()).append("\n"));
+        if (screeningList.length() > 2) {
+            screeningList.delete(screeningList.length() - 1, screeningList.length());
+            return screeningList.toString();
+        } else {
             return "There are no screenings";
         }
-        StringBuilder asd = new StringBuilder();
-        for (var l : list) {
-            asd.append(l.toString()).append("\n");
-        }
-        return asd.toString();
     }
 
     public Availability isLoggedIn() {
